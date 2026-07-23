@@ -43,19 +43,19 @@ assert.equal(card._toKwh(3600000, "J"), 1);
 
 assert.deepEqual(
   card._rateFor({ year: 2026, month: 7, day: 10, hour: 2 }),
-  { band: "nightboost", rate: 0.1056 },
+  { band: "nightboost", rate: 0 },
 );
 assert.deepEqual(
   card._rateFor({ year: 2026, month: 7, day: 10, hour: 8 }),
-  { band: "day", rate: 0.365 },
+  { band: "day", rate: 0.25 },
 );
 assert.deepEqual(
   card._rateFor({ year: 2026, month: 7, day: 10, hour: 23 }),
-  { band: "night", rate: 0.18 },
+  { band: "night", rate: 0 },
 );
 assert.deepEqual(
   card._rateFor({ year: 2026, month: 6, day: 30, hour: 12 }),
-  { band: "day", rate: 0.3334 },
+  { band: "day", rate: 0 },
 );
 
 card.setConfig({
@@ -93,8 +93,8 @@ assert.ok(Math.abs(day.day - 15) < 1e-9, "15 hours use the day tariff");
 assert.ok(Math.abs(day.nightboost - 2) < 1e-9, "2 hours use Nightboost");
 assert.ok(Math.abs(day.night - 7) < 1e-9, "7 hours use the night tariff");
 
-const rawCost = 15 * 0.365 + 2 * 0.1056 + 7 * 0.18;
-const payableCost = rawCost * 0.945 * 1.09;
+const rawCost = 15 * 0.25;
+const payableCost = rawCost;
 assert.ok(Math.abs(day.cost - payableCost) < 1e-9, "discount and VAT are applied");
 
 card._entityRegistry = new Map([
@@ -213,7 +213,7 @@ const loadedYear = await card._loadYear("sensor.example_smart_plug_energy");
 assert.equal(yearlyStatisticsRequest.type, "recorder/statistics_during_period");
 assert.equal(yearlyStatisticsRequest.period, "hour");
 assert.ok(Math.abs(loadedYear.totalKwh - 1) < 1e-9, "year total uses hourly statistics");
-assert.ok(loadedYear.totalCost > 0, "year total applies electricity prices");
+assert.equal(loadedYear.totalCost, 0, "year total applies zero previous prices");
 
 assert.equal(window.customCards[0].type, "smart-plug-energy-card");
 
