@@ -1,0 +1,45 @@
+name: Publish card release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - smart-plug-energy-card.js
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Read card version
+        id: version
+        shell: bash
+        run: |
+          version="$(sed -n 's/^const SPEC_VERSION = "\(.*\)";/\1/p' smart-plug-energy-card.js)"
+          if [ -z "$version" ]; then
+            echo "Could not read SPEC_VERSION"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release v${VERSION} already exists"
+            exit 0
+          fi
+          gh release create "v${VERSION}" \
+            smart-plug-energy-card.js \
+            --title "Smart Plug Energy Calendar v${VERSION}" \
+            --generate-notes
