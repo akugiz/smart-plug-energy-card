@@ -1,0 +1,10 @@
+{
+  "name": "smart-plug-energy-card",
+  "version": "1.0.6",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check smart-plug-energy-card.js",
+    "test": "node tests/card.test.mjs"
+  }
+}
