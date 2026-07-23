@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Smart Plug Energy Calendar demo</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --primary-text-color: #f4f6fa;
+        --secondary-text-color: #9ca6b5;
+        --card-background-color: #14181f;
+        --secondary-background-color: #202630;
+        --divider-color: #2d3440;
+        --disabled-text-color: #667080;
+        --primary-color: #3f9cf2;
+        --text-primary-color: white;
+        --error-color: #ef5350;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: start center;
+        background: #080b10;
+        color: var(--primary-text-color);
+        font-family: Arial, sans-serif;
+        padding: 24px;
+      }
+      smart-plug-energy-card { display: block; width: min(760px, 100%); }
+      ha-card { display: block; border-radius: 20px; box-shadow: 0 12px 40px #0008; }
+      ha-icon { display: inline-grid; place-items: center; width: 24px; height: 24px; }
+      ha-icon::after { content: "●"; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <smart-plug-energy-card id="demo"></smart-plug-energy-card>
+    <script type="module" src="../smart-plug-energy-card.js"></script>
+    <script type="module">
+      await customElements.whenDefined("smart-plug-energy-card");
+      const card = document.querySelector("#demo");
+      const energy = "sensor.example_smart_plug_energy";
+      const states = {
+        "switch.example_smart_plug": {
+          entity_id: "switch.example_smart_plug",
+          state: "on",
+          attributes: { friendly_name: "Example smart plug" },
+        },
+        [energy]: {
+          entity_id: energy,
+          state: "999",
+          attributes: {
+            friendly_name: "Example smart plug energy",
+            device_class: "energy",
+            state_class: "total_increasing",
+            unit_of_measurement: "kWh",
+          },
+        },
+        "sensor.example_smart_plug_power": {
+          state: "58.3",
+          attributes: { device_class: "power", unit_of_measurement: "W" },
+        },
+        "sensor.example_smart_plug_voltage": {
+          state: "231.4",
+          attributes: { device_class: "voltage", unit_of_measurement: "V" },
+        },
+        "sensor.example_smart_plug_current": {
+          state: "0.26",
+          attributes: { device_class: "current", unit_of_measurement: "A" },
+        },
+      };
+      const registry = Object.keys(states).map((entity_id) => ({
+        entity_id,
+        device_id: "example-smart-plug",
+      }));
+
+      function localHour(date) {
+        return Number(
+          new Intl.DateTimeFormat("en", {
+            timeZone: "Europe/Dublin",
+            hour: "2-digit",
+            hourCycle: "h23",
+          }).format(date),
+        );
+      }
+
+      function localDay(date) {
+        return Number(
+          new Intl.DateTimeFormat("en", {
+            timeZone: "Europe/Dublin",
+            day: "2-digit",
+          }).format(date),
+        );
+      }
+
+      function statistics(message) {
+        const start = new Date(message.start_time);
+        const end = new Date(message.end_time);
+        let sum = 500;
+        const rows = [];
+        for (let time = start.getTime(); time < end.getTime(); time += 3600000) {
+          const date = new Date(time);
+          const day = localDay(date);
+          const hour = localHour(date);
+          let increment = 0.058;
+          if (day === 9 && hour >= 17 && hour < 23) increment += 0.12;
+          if (day === 16 && hour >= 10 && hour < 18) increment += 0.22;
+          if (day === 20 && hour >= 15 && hour < 23) increment += 0.38;
+          sum += increment;
+          rows.push({ start: time, end: time + 3600000, sum, state: 999 });
+        }
+        return { [energy]: rows };
+      }
+
+      card.setConfig({
+        entity: "switch.example_smart_plug",
+        title: "Example smart plug",
+      });
+      card.hass = {
+        states,
+        entities: Object.fromEntries(registry.map((entry) => [entry.entity_id, entry])),
+        config: { time_zone: "Europe/Dublin" },
+        locale: { language: "en-IE" },
+        callService: () => {},
+        callWS: async (message) => {
+          if (message.type === "config/entity_registry/list") return registry;
+          if (message.type === "recorder/statistics_during_period") return statistics(message);
+          return [];
+        },
+      };
+    </script>
+  </body>
+</html>
