@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7
+
+- Changed the default Day price to €0.25/kWh.
+- Changed Night, Nightboost, and all previous prices to €0.00/kWh.
+- Changed the default discount and VAT to 0%.
+
 ## 1.0.6
 
 - Added configurable Day, Night, and Nightboost tariff times.
