@@ -1,25 +1,25 @@
 /*
  * Smart Plug Energy Calendar Card for Home Assistant
- * Version 1.0.6
+ * Version 1.0.7
  *
  * A dependency-free Lovelace card that discovers the energy sensors belonging
  * to a selected smart plug and renders a Tapo-style monthly usage calendar.
  */
 
-const SPEC_VERSION = "1.0.6";
+const SPEC_VERSION = "1.0.7";
 
 const DEFAULTS = Object.freeze({
   title: "",
   currency: "EUR",
-  day_rate: 0.365,
-  night_rate: 0.18,
-  nightboost_rate: 0.1056,
-  vat_percent: 9,
-  discount_percent: 5.5,
+  day_rate: 0.25,
+  night_rate: 0,
+  nightboost_rate: 0,
+  vat_percent: 0,
+  discount_percent: 0,
   rate_change_date: "2026-07-01",
-  previous_day_rate: 0.3334,
-  previous_night_rate: 0.1644,
-  previous_nightboost_rate: 0.0965,
+  previous_day_rate: 0,
+  previous_night_rate: 0,
+  previous_nightboost_rate: 0,
   day_start_time: "08:00:00",
   day_end_time: "23:00:00",
   night_start_time: "23:00:00",
