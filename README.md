@@ -22,25 +22,26 @@ No Utility Meter helper, Template helper, or tariff automation is required. The 
 
 ## Default tariff
 
-The included defaults match the electricity bill used to create the card.
+The included defaults provide a simple starting point. Change them in the visual
+editor to match your electricity tariff.
 
-Current prices from 1 July 2026, before VAT:
+Current default prices:
 
 | Period | Hours | Rate |
 | --- | --- | ---: |
-| Nightboost | 02:00–04:00 | €0.1056/kWh |
-| Day | 08:00–23:00 | €0.3650/kWh |
-| Night | Remaining hours | €0.1800/kWh |
+| Nightboost | 02:00–04:00 | €0.00/kWh |
+| Day | 08:00–23:00 | €0.25/kWh |
+| Night | Remaining hours | €0.00/kWh |
 
-Previous prices before 1 July 2026:
+Previous default prices:
 
 | Period | Rate |
 | --- | ---: |
-| Nightboost | €0.0965/kWh |
-| Day | €0.3334/kWh |
-| Night | €0.1644/kWh |
+| Nightboost | €0.00/kWh |
+| Day | €0.00/kWh |
+| Night | €0.00/kWh |
 
-The default bill adjustments are a 5.5% discount and 9% VAT. All values can be changed in the visual card editor.
+The default discount and VAT are both 0%. All values can be changed in the visual card editor.
 
 Open **Tariff times** in the visual card editor to change the Day, Night, and Nightboost start/end times. Nightboost takes priority when it sits inside the Night period. Any gap outside the configured ranges safely uses the Night price.
 
@@ -75,7 +76,7 @@ Open **Tariff times** in the visual card editor to change the Day, Night, and Ni
 7. Select **Add resource** and enter:
 
    ```text
-   /local/smart-plug-energy-card.js?v=1.0.6
+   /local/smart-plug-energy-card.js?v=1.0.7
    ```
 
 8. Select **JavaScript module** and save.
@@ -106,14 +107,14 @@ currency: EUR
 
 # Current prices from this date
 rate_change_date: "2026-07-01"
-day_rate: 0.3650
-night_rate: 0.1800
-nightboost_rate: 0.1056
+day_rate: 0.25
+night_rate: 0
+nightboost_rate: 0
 
 # Prices before rate_change_date
-previous_day_rate: 0.3334
-previous_night_rate: 0.1644
-previous_nightboost_rate: 0.0965
+previous_day_rate: 0
+previous_night_rate: 0
+previous_nightboost_rate: 0
 
 # Editable tariff times
 day_start_time: "08:00:00"
@@ -123,8 +124,8 @@ night_end_time: "08:00:00"
 nightboost_start_time: "02:00:00"
 nightboost_end_time: "04:00:00"
 
-discount_percent: 5.5
-vat_percent: 9
+discount_percent: 0
+vat_percent: 0
 week_start: sunday
 initial_view: kwh
 blue_limit: 1
@@ -170,7 +171,7 @@ The displayed month can only include history that Home Assistant has recorded. A
 Replace the JavaScript file with the new version and change the version at the end of the resource URL, for example:
 
 ```text
-/local/smart-plug-energy-card.js?v=1.0.6
+/local/smart-plug-energy-card.js?v=1.0.7
 ```
 
 Then refresh Home Assistant.
