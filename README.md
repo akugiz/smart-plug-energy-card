@@ -2,6 +2,9 @@
 
 A standalone Home Assistant dashboard card for smart plugs with energy monitoring. Select the plug switch and the card automatically finds the energy, power, voltage, and current sensors belonging to the same device.
 
+![Smart Plug Energy Calendar Card](photo.png)
+![Smart Plug Energy Calendar Card](photo2.png)
+
 It shows:
 
 - a Tapo-style monthly calendar with a value inside every recorded day;
